@@ -1,0 +1,1 @@
+export { Splash as default } from '../src/pages/splash/splash';
