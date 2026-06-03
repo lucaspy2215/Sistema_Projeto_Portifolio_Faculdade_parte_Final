@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { themas } from "../../global/themes";
 
 export const style = StyleSheet.create({
     container: {
@@ -13,13 +14,9 @@ export const style = StyleSheet.create({
         paddingBottom: 60,
         backgroundColor: '#1a3a2a',
     },
-    logoContainer: {
-        width: 60,
-        height: 60,
-        borderRadius: 14,
-        backgroundColor: '#2e6b4f',
-        alignItems: 'center',
-        justifyContent: 'center',
+    logo: {
+        width: 80,
+        height: 80,
         marginBottom: 10,
     },
     brandName: {
@@ -57,7 +54,7 @@ export const style = StyleSheet.create({
         marginLeft: 4,
     },
     button: {
-        backgroundColor: '#2e6b4f',
+        backgroundColor: themas.color.primary,
         borderRadius: 12,
         height: 50,
         alignItems: 'center',
@@ -76,7 +73,7 @@ export const style = StyleSheet.create({
         color: '#666',
     },
     registerLink: {
-        color: '#2e6b4f',
+        color: themas.color.primary,
         fontWeight: '600',
     },
-})
+});

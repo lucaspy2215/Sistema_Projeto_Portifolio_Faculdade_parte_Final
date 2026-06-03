@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, ActivityIndicator, Alert, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialIcons, Ionicons, Octicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -71,12 +71,16 @@ export default function Cadastro() {
                     <TouchableOpacity style={style.backButton} onPress={() => router.back()}>
                         <Ionicons name="arrow-back" size={28} color="#fff" />
                     </TouchableOpacity>
-                    <Ionicons name="add-circle" size={50} color="#fff" />
+                    <Image
+                        source={require('../assets/images/logo.png')}
+                        style={style.logo}
+                        resizeMode="contain"
+                    />
                     <Text style={style.brandName}>+Saúde</Text>
                 </View>
 
                 <View style={style.card}>
-                    <Text style={style.title}>Cadastro</Text>
+                    <Text style={style.title}>Seja bem-vindo!</Text>
 
                     <Input title="Nome" placeholder="Nome completo"
                         iconLeft={Ionicons} iconLeftName="person-outline"

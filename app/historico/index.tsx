@@ -1,13 +1,17 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, SafeAreaView, ScrollView,
-  TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl,
+  TouchableOpacity, StatusBar, ActivityIndicator, RefreshControl, Alert,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+
 import { supabase } from '../../src/lib/supabase';
 import { themas } from '../../src/global/themes';
 import { style } from '../../src/pages/historico/style';
+
+// ── Tipos 
+
 type Item = {
   id: string;
   kind: 'consulta' | 'exame';
@@ -21,11 +25,17 @@ type Item = {
   created_at: string;
 };
 
+// ── Tela 
+
 export default function Historico() {
   const router = useRouter();
+
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  // ── Carregamento 
 
   async function loadData() {
     const { data: { user } } = await supabase.auth.getUser();
@@ -49,6 +59,64 @@ export default function Historico() {
   useEffect(() => { loadData(); }, []);
 
   const onRefresh = useCallback(() => { setRefreshing(true); loadData(); }, []);
+
+  // ── Exclusão 
+
+  function confirmDelete(item: Item) {
+    Alert.alert(
+      'Excluir registro',
+      `Deseja excluir "${item.type}" do histórico?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Excluir', style: 'destructive', onPress: () => handleDelete(item) },
+      ]
+    );
+  }
+
+  async function handleDelete(item: Item) {
+    setDeleting(item.id);
+
+    const table = item.kind === 'consulta' ? 'appointments' : 'exams';
+    const { error } = await supabase.from(table).delete().eq('id', item.id);
+
+    setDeleting(null);
+
+    if (error) {
+      Alert.alert('Erro', `Não foi possível excluir: ${error.message}`);
+      return;
+    }
+
+    // Remove da lista local somente após confirmação do banco
+    setItems(prev => prev.filter(i => i.id !== item.id));
+  }
+
+  // ── Helpers de status 
+
+  function getStatusLabel(status: string) {
+    if (status === 'agendado') return 'Agendado';
+    if (status === 'confirmado') return 'Confirmado';
+    return 'Concluído';
+  }
+
+  function getStatusChipStyle(status: string) {
+    if (status === 'agendado') return style.chipAgendado;
+    if (status === 'confirmado') return style.chipConfirmado;
+    return style.chipConcluido;
+  }
+
+  function getStatusDotStyle(status: string) {
+    if (status === 'agendado') return style.statusDot;
+    if (status === 'confirmado') return style.dotConfirmado;
+    return style.dotConcluido;
+  }
+
+  function getStatusTextStyle(status: string) {
+    if (status === 'agendado') return style.statusText;
+    if (status === 'confirmado') return style.textConfirmado;
+    return style.textConcluido;
+  }
+
+  // ── Render 
 
   return (
     <SafeAreaView style={style.safeArea}>
@@ -81,6 +149,7 @@ export default function Historico() {
           ) : (
             items.map((item) => (
               <View key={item.id} style={style.card}>
+
                 <View style={style.cardHeader}>
                   <View style={[style.badge, item.kind === 'consulta' ? style.badgeConsulta : style.badgeExame]}>
                     <MaterialCommunityIcons
@@ -91,25 +160,41 @@ export default function Historico() {
                       {item.kind === 'consulta' ? 'Consulta' : 'Exame'}
                     </Text>
                   </View>
-                  <View style={[style.statusChip, item.status === 'agendado' ? style.chipAgendado : style.chipConcluido]}>
-                    <View style={[style.statusDot, item.status !== 'agendado' && style.dotConcluido]} />
-                    <Text style={[style.statusText, item.status !== 'agendado' && style.textConcluido]}>
-                      {item.status === 'agendado' ? 'Agendado' : 'Concluído'}
-                    </Text>
+
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <View style={[style.statusChip, getStatusChipStyle(item.status)]}>
+                      <View style={[style.statusDot, getStatusDotStyle(item.status)]} />
+                      <Text style={[style.statusText, getStatusTextStyle(item.status)]}>
+                        {getStatusLabel(item.status)}
+                      </Text>
+                    </View>
+
+                    <TouchableOpacity
+                      style={style.deleteBtn}
+                      onPress={() => confirmDelete(item)}
+                      disabled={deleting === item.id}
+                    >
+                      {deleting === item.id
+                        ? <ActivityIndicator size="small" color="#e74c3c" />
+                        : <Ionicons name="trash-outline" size={16} color="#e74c3c" />}
+                    </TouchableOpacity>
                   </View>
                 </View>
 
                 <Text style={style.cardType}>{item.type}</Text>
+
                 {item.doctor && (
                   <View style={style.infoRow}>
                     <MaterialCommunityIcons name="doctor" size={15} color={themas.color.gray} />
                     <Text style={style.infoText}>{item.doctor}</Text>
                   </View>
                 )}
+
                 <View style={style.infoRow}>
                   <Ionicons name="calendar-outline" size={15} color={themas.color.gray} />
                   <Text style={style.infoText}>{item.date}</Text>
                 </View>
+
                 <View style={style.infoRow}>
                   <Ionicons name="time-outline" size={15} color={themas.color.gray} />
                   <Text style={style.infoText}>{item.time}</Text>
@@ -118,6 +203,7 @@ export default function Historico() {
                 <View style={style.cardFooter}>
                   <Text style={style.price}>R$ {Number(item.price).toFixed(2)}</Text>
                 </View>
+
               </View>
             ))
           )}

@@ -5,9 +5,13 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+
 import { Input } from '../../src/components/Input';
 import { style } from '../../src/pages/agendar-exame/style';
 import { themas } from '../../src/global/themes';
+import { supabase } from '../../src/lib/supabase';
+
+// ── Constantes ────────────────────────────────────────────────────────────
 
 const EXAMES = [
     'Hemograma completo',
@@ -31,6 +35,7 @@ function generateDates() {
     const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
     const today = new Date();
     const dates: { label: string; full: string }[] = [];
+
     for (let i = 1; i <= 20; i++) {
         const d = new Date(today);
         d.setDate(today.getDate() + i);
@@ -45,6 +50,8 @@ function generateDates() {
 }
 
 const DATAS = generateDates();
+
+// ── Componente SelectModal ────────────────────────────────────────────────
 
 type SelectModalProps = {
     visible: boolean;
@@ -61,6 +68,7 @@ function SelectModal({ visible, title, options, onSelect, onClose }: SelectModal
                 <View style={style.modalSheet}>
                     <View style={style.modalHandle} />
                     <Text style={style.modalTitle}>{title}</Text>
+
                     {options.map((opt) => (
                         <TouchableOpacity
                             key={opt}
@@ -77,6 +85,8 @@ function SelectModal({ visible, title, options, onSelect, onClose }: SelectModal
     );
 }
 
+// ── Helpers ───────────────────────────────────────────────────────────────
+
 function formatCPF(value: string) {
     const d = value.replace(/\D/g, '').slice(0, 11);
     if (d.length <= 3) return d;
@@ -85,8 +95,11 @@ function formatCPF(value: string) {
     return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
 }
 
+// ── Tela principal ────────────────────────────────────────────────────────
+
 export default function AgendarExame() {
     const router = useRouter();
+
     const [nome, setNome] = useState('');
     const [cpf, setCpf] = useState('');
     const [exame, setExame] = useState('');
@@ -97,20 +110,58 @@ export default function AgendarExame() {
     const [modalData, setModalData] = useState(false);
     const [modalHorario, setModalHorario] = useState(false);
 
-    function handleConfirm() {
+    // ── Verificação e navegação ───────────────────────────────────────────────
+
+    async function handleConfirm() {
         if (!nome || !cpf || !exame || !horario) {
             Alert.alert('Atenção', 'Preencha todos os campos!');
             return;
         }
+
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (user) {
+            const now = new Date();
+            const inicioMes = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            const fimMes = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString();
+
+            const { data: existing } = await supabase
+                .from('exams')
+                .select('id')
+                .eq('patient_id', user.id)
+                .in('status', ['agendado', 'confirmado'])
+                .gte('created_at', inicioMes)
+                .lte('created_at', fimMes);
+
+            if (existing && existing.length > 0) {
+                Alert.alert(
+                    '⚠️ Exame já agendado',
+                    'Você já possui um exame agendado este mês.\n\nAguarde o resultado ou volte à Clínica +Saúde para saber mais.',
+                    [{ text: 'Entendido', style: 'default' }]
+                );
+                return;
+            }
+        }
+
         router.push({
             pathname: '/agendar-exame/resumo',
-            params: { nome, cpf, exame, data: data.full, dataLabel: data.label, horario },
+            params: {
+                nome,
+                cpf,
+                exame,
+                data: data.full,
+                dataLabel: data.label,
+                horario,
+            },
         });
     }
+
+    // ── Render ────────────────────────────────────────────────────────────────
 
     return (
         <SafeAreaView style={style.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor={themas.color.primary} />
+
             <ScrollView contentContainerStyle={style.scrollContent} showsVerticalScrollIndicator={false}>
 
                 <View style={style.header}>
@@ -177,10 +228,12 @@ export default function AgendarExame() {
 
             <SelectModal visible={modalExame} title="Selecione o exame" options={EXAMES}
                 onSelect={setExame} onClose={() => setModalExame(false)} />
+
             <SelectModal visible={modalData} title="Selecione a data"
                 options={DATAS.map(d => d.label)}
                 onSelect={(label) => setData(DATAS.find(d => d.label === label)!)}
                 onClose={() => setModalData(false)} />
+
             <SelectModal visible={modalHorario} title="Selecione o horário" options={HORARIOS}
                 onSelect={setHorario} onClose={() => setModalHorario(false)} />
 

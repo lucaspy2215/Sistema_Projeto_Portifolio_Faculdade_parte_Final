@@ -6,9 +6,7 @@ export const style = StyleSheet.create({
 
   header: {
     backgroundColor: themas.color.primary,
-    paddingHorizontal: 24,
-    paddingTop: 52,
-    paddingBottom: 28,
+    paddingHorizontal: 24, paddingTop: 52, paddingBottom: 28,
   },
   backBtn: {
     width: 36, height: 36, borderRadius: 10,
@@ -19,7 +17,6 @@ export const style = StyleSheet.create({
   headerSub: { fontSize: 11, color: themas.color.secondary, fontWeight: '600', letterSpacing: 1.5 },
 
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-
   scrollContent: { padding: 20, paddingBottom: 40, flexGrow: 1 },
 
   emptyBox: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 80 },
@@ -27,14 +24,10 @@ export const style = StyleSheet.create({
   emptyText: { fontSize: 14, color: '#bbb', marginTop: 6, textAlign: 'center' },
 
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 18, padding: 18,
-    marginBottom: 14,
-    borderWidth: 1, borderColor: '#e8f4ef',
-    shadowColor: themas.color.primary,
-    shadowOpacity: 0.06, shadowRadius: 8,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
+    backgroundColor: '#fff', borderRadius: 18, padding: 18,
+    marginBottom: 14, borderWidth: 1, borderColor: '#e8f4ef',
+    shadowColor: themas.color.primary, shadowOpacity: 0.06,
+    shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2,
   },
   cardHeader: {
     flexDirection: 'row', alignItems: 'center',
@@ -42,8 +35,7 @@ export const style = StyleSheet.create({
   },
   badge: {
     flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 10, paddingVertical: 4,
-    borderRadius: 20, gap: 5,
+    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, gap: 5,
   },
   badgeConsulta: { backgroundColor: themas.color.primary },
   badgeExame: { backgroundColor: '#2E6BAD' },
@@ -51,22 +43,27 @@ export const style = StyleSheet.create({
 
   statusChip: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#e8f7ef',
-    paddingHorizontal: 10, paddingVertical: 4,
-    borderRadius: 20, gap: 5,
+    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, gap: 5,
   },
   chipAgendado: { backgroundColor: '#e8f7ef' },
+  chipConfirmado: { backgroundColor: '#e8f0ff' },
   chipConcluido: { backgroundColor: '#f0f0f0' },
-  statusDot: {
-    width: 7, height: 7, borderRadius: 4,
-    backgroundColor: '#2ecc71',
-  },
+
+  statusDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#2ecc71' },
+  dotConfirmado: { backgroundColor: '#4a90e2' },
   dotConcluido: { backgroundColor: '#aaa' },
+
   statusText: { fontSize: 12, color: '#2ecc71', fontWeight: '600' },
+  textConfirmado: { color: '#4a90e2' },
   textConcluido: { color: '#aaa' },
 
-  cardType: { fontSize: 16, fontWeight: '700', color: themas.color.primary, marginBottom: 10 },
+  deleteBtn: {
+    width: 30, height: 30, borderRadius: 8,
+    backgroundColor: '#fff0f0', borderWidth: 1, borderColor: '#ffd5d5',
+    alignItems: 'center', justifyContent: 'center',
+  },
 
+  cardType: { fontSize: 16, fontWeight: '700', color: themas.color.primary, marginBottom: 10 },
   infoRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
   infoText: { fontSize: 13, color: '#555' },
 

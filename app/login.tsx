@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { Text, View, TouchableOpacity, Alert, ActivityIndicator, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialIcons, Octicons, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -42,9 +42,11 @@ export default function Login() {
         >
             <View style={style.container}>
                 <View style={style.header}>
-                    <View style={style.logoContainer}>
-                        <Ionicons name="add-circle" size={40} color="#fff" />
-                    </View>
+                    <Image
+                        source={require('../assets/images/logo.png')}
+                        style={style.logo}
+                        resizeMode="contain"
+                    />
                     <Text style={style.brandName}>+Saúde</Text>
                     <Text style={style.brandSub}>AGENDAMENTO CLÍNICO</Text>
                 </View>

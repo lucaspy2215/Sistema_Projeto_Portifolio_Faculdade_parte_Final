@@ -1,43 +1,48 @@
 import { StyleSheet, Dimensions } from "react-native";
-import { themas } from "../../global/themes"; // Caminho corrigido para sua estrutura
+import { themas } from "../../global/themes";
 
 export const style = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: themas.color.primary, // O verde do seu projeto
+        backgroundColor: themas.color.primary,
     },
     header: {
         height: Dimensions.get('window').height * 0.25,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 20
+        paddingTop: 20,
     },
     backButton: {
         position: 'absolute',
         left: 20,
         top: 20,
     },
+    logo: {
+        width: 80,
+        height: 80,
+        marginBottom: 8,
+    },
     brandName: {
         color: '#fff',
         fontSize: 30,
         fontWeight: 'bold',
-        marginTop: 5
+        marginTop: 5,
     },
     card: {
         flex: 1,
-        backgroundColor: themas.color.bgScreen, // O fundo claro
+        backgroundColor: themas.color.bgScreen,
         borderTopLeftRadius: 40,
         borderTopRightRadius: 40,
         paddingHorizontal: 35,
         paddingTop: 30,
-        paddingBottom: 40
+        paddingBottom: 40,
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
         color: '#000',
         textAlign: 'center',
-        marginBottom: 25
+        marginBottom: 25,
     },
     button: {
         width: '100%',
@@ -56,6 +61,6 @@ export const style = StyleSheet.create({
     buttonText: {
         color: '#FFF',
         fontSize: 18,
-        fontWeight: 'bold'
-    }
+        fontWeight: 'bold',
+    },
 });
